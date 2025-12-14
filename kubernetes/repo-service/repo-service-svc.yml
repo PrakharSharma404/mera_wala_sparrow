@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: repo-service-svc
+  namespace: sparrow-vps
+spec:
+  selector:
+    app: repo-service
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+    nodePort: 30080
+  type: NodePort

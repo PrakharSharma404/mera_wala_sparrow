@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: deploy-service
+  namespace: sparrow-vps
+spec:
+  selector:
+    app: deploy-service
+  ports:
+  - protocol: TCP
+    port: 8002
+    targetPort: 8002
+    nodePort: 30082
+  
+  # -----------------------------------------------------------------------
+  # What: Expose Prometheus metrics on the Service.
+  # Why:  To make the metrics accessible to Prometheus via the Service DNS/IP.
+  # How:  Maps Service port 2112 to container port 2112.
+  #       Also opens NodePort 32113 for external access (e.g., development).
+  # -----------------------------------------------------------------------
+  # Metrics port configuration
+  - protocol: TCP
+    port: 2112
+    targetPort: 2112
+    name: metrics
+    nodePort: 32113
+  type: NodePort

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-service-deployment
+  namespace: sparrow-vps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deploy-service
+  template:
+    metadata:
+      labels:
+        app: deploy-service
+    spec:
+      volumes:
+      - name: docker-socket
+        hostPath:
+          path: /var/run/docker.sock
+      containers:
+      - name: deploy-service
+        image: r3dacted42/sparrow-deploy-service
+        volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
+        ports:
+        - containerPort: 8002
+        # -----------------------------------------------------------------
+        # What: Expose the Prometheus metrics port in the container.
+        # Why:  To make the metrics endpoint accessible within the pod.
+        # How:  Defines containerPort 2112 matching the Dockerfile EXPOSE.
+        # -----------------------------------------------------------------
+        - containerPort: 2112
+        env:
+        - name: SPARROW_ORIGIN
+          valueFrom:
+            configMapKeyRef:
+              name: sparrow-config
+              key: allowedOrigins
+        - name: DOCKER_HOST
+          value: unix:///var/run/docker.sock
