@@ -12,6 +12,10 @@ spec:
     metadata:
       labels:
         app: deploy-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "2112"
+
     spec:
       volumes:
       - name: docker-socket
