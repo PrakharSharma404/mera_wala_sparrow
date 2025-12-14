@@ -3,6 +3,7 @@ package routes
 import (
 	"container-service/types"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -25,7 +26,7 @@ var buildRequestDuration = prometheus.NewHistogram(
 	prometheus.HistogramOpts{
 		Name:    "build_request_duration_seconds",
 		Help:    "Duration of Docker image build request handling in seconds",
-		Buckets: prometheus.DefBuckets,
+		Buckets: []float64{1, 5, 10, 30, 60, 120, 300, 600},
 	},
 )
 
@@ -54,7 +55,9 @@ func HandleBuildRequest(c *gin.Context) {
 	}
 
 	// Simulation
-	time.Sleep(200 * time.Millisecond)
+	// Sleep between 500ms and 3000ms
+	latency := 500 + rand.Intn(2500)
+	time.Sleep(time.Duration(latency) * time.Millisecond)
 	imageTag := fmt.Sprintf("%s/%s", request.RepoOwner, request.RepoName)
 
 	c.JSON(http.StatusOK, gin.H{

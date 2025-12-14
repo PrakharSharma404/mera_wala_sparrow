@@ -31,7 +31,8 @@ var deployDuration = prometheus.NewHistogram(
 	prometheus.HistogramOpts{
 		Name:    "deployment_duration_seconds",
 		Help:    "Duration of deployments in seconds",
-		Buckets: prometheus.DefBuckets,
+		Buckets: []float64{1, 5, 10, 30, 60, 120, 300, 600},
+
 	},
 )
 

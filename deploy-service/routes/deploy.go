@@ -2,7 +2,9 @@ package routes
 
 import (
 	"deploy-service/types"
+	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
@@ -42,6 +44,10 @@ func HandleDeploy(c *gin.Context) {
 	}
 
 	// Logic for deployment would go here...
+	// Sleep between 500ms and 3000ms
+	latency := 500 + rand.Intn(2500)
+	time.Sleep(time.Duration(latency) * time.Millisecond)
+
 
 	// ---------------------------------------------------------
 	// What: Record a successful deployment.
