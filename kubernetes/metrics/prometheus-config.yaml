@@ -12,25 +12,22 @@ data:
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
-          # 1. Only scrape pods that have the annotation prometheus.io/scrape: "true"
+          # 1. Discovery: Only scrape pods with annotation prometheus.io/scrape: "true"
           - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
             action: keep
             regex: true
 
-          # 2. Allow the pod to specify the port via annotation (e.g., "2112")
-          #    This overrides the default port so you don't have to hardcode "2112" in config.
+          # 2. Port: Use the port defined in annotation prometheus.io/port
           - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
             action: replace
             regex: ([^:]+)(?::\d+)?;(\d+)
             replacement: $1:$2
             target_label: __address__
 
-          # 3. Add the Kubernetes pod name as a label "pod" in Prometheus
+          # 3. Labels: Keep pod and app names for Grafana
           - source_labels: [__meta_kubernetes_pod_name]
             action: replace
             target_label: pod
-
-          # 4. Add the Kubernetes app label as a label "app" (useful for filtering)
           - source_labels: [__meta_kubernetes_pod_label_app]
             action: replace
             target_label: app
