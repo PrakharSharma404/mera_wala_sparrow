@@ -35,8 +35,15 @@ func main() {
 	router.GET("/preview", routes.HandlePreviewRequest)
 	router.POST("/build", routes.HandleBuildRequest)
 
-	port := ":8001"
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8001"
+	}
+	if !strings.HasPrefix(port, ":") {
+		port = ":" + port
+	}
+
 	if err := router.Run(port); err != nil {
-		panic("failed to start service: " + err.Error())
+		log.Fatal("failed to start service: " + err.Error())
 	}
 }

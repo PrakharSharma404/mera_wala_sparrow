@@ -35,8 +35,15 @@ func main() {
 	router.POST("/deploy", routes.HandleDeploy)
 
 
-	port := ":8002"
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8002"
+	}
+	if !strings.HasPrefix(port, ":") {
+		port = ":" + port
+	}
+
 	if err := router.Run(port); err != nil {
-		panic("failed to start service: " + err.Error())
+		log.Fatal("failed to start service: " + err.Error())
 	}
 }
