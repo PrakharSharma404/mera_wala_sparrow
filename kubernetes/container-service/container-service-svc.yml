@@ -8,6 +8,7 @@ spec:
     app: container-service
   ports:
   - protocol: TCP
+    name: http-api
     port: 8001         # existing app port
     targetPort: 8001
     nodePort: 30081

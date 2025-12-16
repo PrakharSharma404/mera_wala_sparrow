@@ -15,6 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: r3dacted42/sparrow-frontend
+        image: sparrow-frontend
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80

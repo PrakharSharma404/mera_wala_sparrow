@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dummy-metrics
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dummy-metrics
+  template:
+    metadata:
+      labels:
+        app: dummy-metrics
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+    spec:
+      containers:
+      - name: dummy-metrics
+        image: sparrow-dummy-metrics:v2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dummy-metrics
+  namespace: monitoring
+spec:
+  selector:
+    app: dummy-metrics
+  ports:
+  - port: 8000
+    targetPort: 8000
+    name: metrics

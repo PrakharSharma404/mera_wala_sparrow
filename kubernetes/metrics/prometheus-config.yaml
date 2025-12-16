@@ -31,4 +31,7 @@ data:
           - source_labels: [__meta_kubernetes_pod_label_app]
             action: replace
             target_label: app
+      - job_name: 'dummy-metrics-static'
+        static_configs:
+          - targets: ['dummy-metrics.monitoring.svc:8000']
 
