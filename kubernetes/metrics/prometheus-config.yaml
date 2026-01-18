@@ -8,6 +8,30 @@ data:
     global:
       scrape_interval: 15s
     scrape_configs:
-      - job_name: 'deploy-service'
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          # 1. Discovery: Only scrape pods with annotation prometheus.io/scrape: "true"
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+
+          # 2. Port: Use the port defined in annotation prometheus.io/port
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+
+          # 3. Labels: Keep pod and app names for Grafana
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: replace
+            target_label: app
+      - job_name: 'dummy-metrics-static'
         static_configs:
-          - targets: ['deploy-service.sparrow-vps.svc.cluster.local:8002']
+          - targets: ['dummy-metrics.monitoring.svc:8000']
+
